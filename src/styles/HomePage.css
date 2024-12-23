@@ -1,0 +1,185 @@
+/* Reset margins and prevent horizontal scrolling */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Full-page container with background image and overlay */
+.home-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw; 
+  padding: 0 20px;
+  position: relative;
+  overflow: hidden;
+  background: url("./path-to-your-background.png") no-repeat;
+  background-size: cover;
+  background-position: center;
+  animation: background-fade 3s ease-in-out forwards;
+  transform: translateY(0);
+  transition: transform 1.5s ease-in-out;
+  will-change: transform; 
+}
+
+/* Slide-up animation */
+.home-page.slide-up {
+  transform: translateY(-100%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Initial semi-transparent black overlay */
+.home-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  animation: overlay-fade 3s ease-in-out forwards;
+  z-index: -1;
+}
+
+/* Background fade-in animation */
+/* @keyframes background-fade {
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+} */
+
+/* Overlay fade-out animation */
+@keyframes overlay-fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Content container */
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  color: white;
+}
+
+/* Logo styles */
+.logo {
+  position: absolute;
+  top: 50px;
+}
+
+.logo-img {
+  width: 120px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.logo-img.hover-zoom:hover {
+  transform: scale(1.1);
+}
+
+/* Animated text */
+.animated-text.fade-in {
+  font-size: 2.5rem;
+  animation: fade-in 3s ease-in-out;
+}
+
+.team-name.slide-in {
+  font-size: 3rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 20px 0;
+  animation: fade-in 3s ease-in-out;
+  letter-spacing: 2px;
+}
+
+/* Fade-in animation */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide-up trigger */
+.slide-container {
+  position: absolute;
+  bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  animation: bounce 1.5s infinite ease-in-out;
+}
+
+.slide-container .slide-text {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.slide-icon {
+  font-size: 40px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.slide-icon:hover {
+  transform: scale(1.2);
+}
+
+/* Bounce animation */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .logo-img {
+    width: 90px;
+  }
+
+  .team-name.slide-in {
+    font-size: 2rem;
+  }
+
+  .slide-icon {
+    font-size: 30px;
+  }
+
+  .slide-container .slide-text {
+    font-size: 1rem;
+  }
+}

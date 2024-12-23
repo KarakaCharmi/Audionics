@@ -1,0 +1,229 @@
+/* Container */
+.container {
+    height: 100vh; /* Full viewport height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap:10px;
+    background-color: #d1dbe4; /* Light Blue */
+    font-family: "Arial", sans-serif;
+    box-sizing: border-box;
+    /* transition: transform 1s ease; Add transition for sliding effect */
+}
+
+/* Intro Screen */
+.intro-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 10px;
+    background-color: #a3b7ca; /* Soft Blue */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    margin-top: 100px; }
+
+.intro-screen h1 {
+    font-size: 36px;
+    font-weight: 600;
+    color: #194a7a; /* Dark Blue */
+    margin: 0;
+}
+
+.intro-screen p {
+    font-size: 18px;
+    color: #476f95; /* Medium Blue */
+    margin: 0;
+}
+
+.get-started-btn {
+    font-size: 18px;
+    font-weight: 500;
+    color: #d1dbe4; /* Light Blue */
+    background-color: #194a7a; /* Dark Blue */
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.get-started-btn:hover {
+    background-color: #476f95; /* Medium Blue */
+}
+
+/* Content Area */
+.fileclass {
+    background-color: #d1dbe4; /* Light Blue */
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    /* padding: 20px; */
+    margin-top: 80px; 
+    font-family: "Arial", sans-serif;
+    overflow-y: auto; 
+    box-sizing: border-box; 
+}
+
+/* Processed Audios Section (Optional) */
+.processed-audios {
+    margin-top: 10px;
+    background-color: #f9f9f90a;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    
+  }
+  .processed-audios ul{
+    list-style-type: none;
+    padding:0;
+    margin:0;
+  }
+  .processed-audios ul li{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+  }
+  .audio-item{
+    margin-bottom:10px;
+  }
+  
+/* File Upload Button */
+.file-btn {
+    width: 330px;
+    height: 150px;
+    font-size: 18px;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* gap: 15px; */
+    color: #194a7a; /* Dark Blue */
+    background-color: #d1dbe4; /* Light Blue */
+    border: 2px dashed #476f95; /* Medium Blue */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 15px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.file-btn:hover {
+    background-color: #a3b7ca; /* Soft Blue */
+    border-color: #194a7a; /* Dark Blue */
+}
+
+.file-btn span {
+    width: 50px;
+    height: 50px;
+    font-size: 30px;
+    color: #194a7a; /* Dark Blue */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* File Card */
+.file-card {
+    width: 300px;
+    background-color: #d1dbe4; /* Light Blue */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #194a7a; /* Dark Blue */
+    border: 1px solid #476f95; /* Medium Blue */
+    padding: 8px 15px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.file-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.file-info h6 {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 400;
+    color: #194a7a; /* Dark Blue */
+}
+
+.progress-bg {
+    width: 100%;
+    height: 5px;
+    background-color: #a3b7ca; /* Soft Blue */
+    border-radius: 8px;
+}
+
+.progress {
+    width: 0%;
+    height: 5px;
+    background-color: #476f95; /* Medium Blue */
+    border-radius: 8px;
+    transition: width 0.5s ease;
+}
+
+.icon {
+    font-size: 30px;
+    color: #476f95; /* Medium Blue */
+}
+
+.close-icon {
+    font-size: 18px;
+    cursor: pointer;
+    color: #194a7a; /* Dark Blue */
+}
+
+.file-info button,
+.check-circle {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #194a7a; /* Dark Blue */
+    background-color: #a3b7ca; /* Soft Blue */
+    border: none;
+    border-radius: 30px;
+}
+
+/* Upload Button */
+.upload-btn {
+    width: 330px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #d1dbe4; /* Light Blue */
+    background-color: #194a7a; /* Dark Blue */
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.upload-btn:hover {
+    background-color: #476f95; /* Medium Blue */
+}
+
+    
+.processed-audios ul li{
+    list-style-type:none;
+   
+}
+
+.material-symbols-outlined {
+  font-size: 20px;
+}
