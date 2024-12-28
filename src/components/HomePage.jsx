@@ -9,7 +9,7 @@ const HomePage = () => {
   const touchStartY = useRef(0);
   const touchEndY = useRef(0);
 
-  const SWIPE_THRESHOLD = 50; // Minimum swipe distance
+  const SWIPE_THRESHOLD = 25; // Minimum swipe distance
   const SLIDE_DURATION = 1000; // Duration of slide animation in milliseconds
 
   // Combined handler for touch and mouse events
@@ -50,14 +50,14 @@ const HomePage = () => {
     >
       <div className="content">
         <div className="logo">
-          <img
-            src="path-to-your-logo.png" // Update with the correct logo path
+          {/* <img
+            src="path-to-your-logo.png" 
             alt="Logo"
             className="logo-img hover-zoom"
-          />
+          /> */}
         </div>
         <div className="animated-text fade-in">Welcome to Audionics</div>
-        <div className="team-name slide-in">Our Amazing Team</div>
+        <div className="team-name slide-in">Team Debutants</div>
         <div className="slide-container">
           <i
             className="fa-solid fa-angles-up slide-icon bounce"

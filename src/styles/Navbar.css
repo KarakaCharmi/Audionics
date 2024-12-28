@@ -84,10 +84,7 @@
     display: flex;
     align-items: center;
 }
-.nav-menu a.active {
-    /* color: #118B50; */
-    font-weight: bold; 
-  }
+
 /* Navigation Links */
 .nav-menu ul li a {
     text-decoration: none;
@@ -99,8 +96,6 @@
     align-items: center;
     gap: 8px; 
 }
-
-
 .nav-menu ul li a span {
     display: inline-block;
 }
