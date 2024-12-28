@@ -112,48 +112,62 @@
     color: #194a7a;
     background-color: wheat;
     box-shadow: 0px 5px 10px black;
+    cursor: pointer;
 }
 /* Make sure the text box has a fixed width but variable height */
 .text-box {
-    width: 300px; /* Set the fixed width here */
-    max-width: 100%; /* Ensure it is responsive */
+    width: 300px; /* Fixed width */
+    max-width: 100%; /* Responsive */
     padding: 10px;
-    background-color: #f0f0f0;
+    background-color: #194a7a;
+    color: wheat;
     border-radius: 8px;
     overflow: hidden;
     margin-top: 10px;
-    transition: height 0.3s ease-in-out; /* Optional smooth transition for height */
-    height: auto; /* Allow height to grow based on content */
-    display: none;
-  }
-  
-  .text-box.open {
-    visibility: visible; /* Make it visible when "open" class is added */
-    display: block;
-  }
+    display: none; /* Initially hidden */
+    opacity: 0; /* Invisible initially */
+    transform: translateY(-10px); /* For upward animation */
+}
+
+.text-box.open {
+    display: block; /* Make it visible */
+    animation: textBoxFade 1s ease-out forwards; /* Trigger animation */
+    animation-delay: 0.3s;
+}
+
+@keyframes textBoxFade {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
   
   /* Word animation */
 .animated-word {
     display: inline-block;
-    opacity: 0;
-    transform: translateY(10px);
-    animation: fadeInUp 0.5s forwards;
-    margin-right: 10px; /* Space between words */
-}
+    opacity: 0; /* Hidden by default */
+    transform: translateY(10px); /* Start slightly below */
+    animation: fadeInUp 0.5s forwards; /* Apply fade-in effect */
+    margin-right: 5px;
+  }
   
   /* Animation for each word */
   @keyframes fadeInUp {
     0% {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(10px); /* Start below */
     }
     100% {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0); /* End in place */
     }
   }
-  
-  
+    
 /* File Upload Button */
 .file-btn {
     width: 330px;

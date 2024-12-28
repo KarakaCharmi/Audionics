@@ -80,7 +80,7 @@ const NextPage = () => {
     setShowProcessedAudios(true);  // Show processed audios when Divide is clicked
   };
   const text='This is a text box to be displayed.';
-  let words=text.split();
+  const words=text.split(" ");
 
   return (
     <div className="container">
@@ -184,7 +184,7 @@ const NextPage = () => {
               <span
                 key={wordIndex}
                 className="animated-word"
-                style={{ animationDelay: `${wordIndex * 0.2}s` }}
+                style={{ animationDelay: `${wordIndex*0.2}s` }}
               >
                 {word}
               </span>
