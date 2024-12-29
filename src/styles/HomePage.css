@@ -16,7 +16,7 @@ html, body {
   padding: 0 20px;
   position: relative;
   overflow: hidden;
-  background: url("./path-to-your-background.png") no-repeat;
+  background: url("./lock_bg.jpg") no-repeat;
   background-size: cover;
   background-position: center;
   animation: background-fade 3s ease-in-out forwards;
@@ -78,10 +78,49 @@ html, body {
   height: 100%;
   width: 100%;
   text-align: center;
-  color: white;
+  color: rgb(215, 234, 237);
+}
+.intro-text{
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  width: 100%;
+  font-family: 'Arial', sans-serif;
+    font-size: 2rem;
+    white-space: nowrap;
+    text-shadow: 0px 1.5px 2.5px white;
+    padding-left: 80px;
+}
+.animated-text, .team-name {
+  display: inline-block;
+  overflow: hidden;
+  width: 0; /* Start with width 0 to animate in */
+  animation: typing 3s steps(20) forwards, blink 0.2s step-end forwards;
+  font-size: 60px;
+  font: bolder;
 }
 
-/* Logo styles */
+@keyframes typing {
+  0% {
+      width: 0;
+  }
+  100% {
+      width: 45%;
+  }
+}
+
+@keyframes blink {
+  100% {
+      border-right: 3px solid rgb(255, 255, 255);
+  }
+}
+
+.team-name {
+  animation-delay: 2s;
+  
+}
+/* Logo styles
 .logo {
   position: absolute;
   top: 50px;
@@ -97,7 +136,7 @@ html, body {
 }
 
 /* Animated text */
-.animated-text.fade-in {
+/* .animated-text.fade-in {
   font-size: 2.5rem;
   animation: fade-in 3s ease-in-out;
 }
@@ -109,23 +148,10 @@ html, body {
   margin: 20px 0;
   animation: fade-in 3s ease-in-out;
   letter-spacing: 2px;
-}
+} */
 
 /* Fade-in animation */
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  50% {
-    opacity: 0.5;
-    transform: translateY(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+
 
 /* Slide-up trigger */
 .slide-container {
@@ -144,6 +170,7 @@ html, body {
   font-size: 1.2rem;
   font-weight: bold;
   margin-top: 5px;
+  text-shadow: 0px 0.5px 5px white;
 }
 
 .slide-icon {

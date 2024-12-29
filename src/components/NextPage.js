@@ -79,11 +79,15 @@ const NextPage = () => {
   const handleDivide = () => {
     setShowProcessedAudios(true);  // Show processed audios when Divide is clicked
   };
-  const text='This is a text box to be displayed.';
+  const text='This is a text box to be displayed.dhbciw uewfiuew fwiuefg weuifg weufgwgeiw eugfwei giweug wieugiw uwieug weiu ';
   const words=text.split(" ");
 
   return (
     <div className="container">
+      {/* <video autoPlay loop muted playsInline className="background-video">
+    <source src="/animation.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video> */}
       {!showUploader ? (
         <div className="intro-screen">
           <h1>Welcome to Audionics</h1>
@@ -112,7 +116,7 @@ const NextPage = () => {
               <div className="file-card">
                 <span className="material-symbols-outlined icon">audiotrack</span>
                 <div className="file-info">
-                  <div style={{ flex: 1 }}>
+                  <div style={{ flex: 1  }}>
                     <h6>{selectedFile.name}</h6>
                     <div className="progress-bg">
                       <div className="progress" style={{ width: `${progress}%` }}></div>
@@ -151,7 +155,7 @@ const NextPage = () => {
             </>
           )}
           {/* Render Processed Audios directly below */}
-    {processedAudios.length > 0 && (
+    {processedAudios.length > 0 && showProcessedAudios && (
   <div className="processed-audios">
     <h2>Processed Audios</h2>
     <ul>

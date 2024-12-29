@@ -56,8 +56,10 @@ const HomePage = () => {
             className="logo-img hover-zoom"
           /> */}
         </div>
-        <div className="animated-text fade-in">Welcome to Audionics</div>
+        <div className="intro-text">
+        <div className="animated-text fade-in">Welcome to <span style={{color:'purple'}}>Audionics</span></div>
         <div className="team-name slide-in">Team Debutants</div>
+        </div>
         <div className="slide-container">
           <i
             className="fa-solid fa-angles-up slide-icon bounce"
