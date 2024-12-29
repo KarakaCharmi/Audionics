@@ -4,6 +4,33 @@ import axios from "axios";
 
 const NextPage = () => {
   const [textB, setTextB] = useState({});
+  const [isTranscribing, setIsTranscribing] = useState({});
+
+  const handleTextBox = async (index, audioFilePath) => {
+    if (!isTranscribing[index]) {
+      setIsTranscribing((prevState) => ({ ...prevState, [index]: true }));
+
+      try {
+        const response = await axios.post("http://localhost:8000/api/transcribe", {
+          audioFilePath: audioFilePath,
+          language: "en-US",
+        });
+
+        if (response.data.transcription) {
+          setTextB((prevState) => ({
+            ...prevState,
+            [index]: response.data.transcription,
+          }));
+        }
+      } catch (error) {
+        console.error("Error during transcription:", error);
+      } finally {
+        setIsTranscribing((prevState) => ({ ...prevState, [index]: false }));
+      }
+    }
+  };
+
+  const inputRef = useRef();
   const [selectedFile, setSelectedFile] = useState(null);
   const [progress, setProgress] = useState(0);
   const [uploadState, setUploadStatus] = useState("select");
@@ -12,16 +39,6 @@ const NextPage = () => {
   const [originalAudioId, setOriginalAudioId] = useState(null);
   const [showClearDivide, setShowClearDivide] = useState(false);
   const [showProcessedAudios, setShowProcessedAudios] = useState(false);
-  const inputRef = useRef();
-
-  const handleTextBox = (index) => {
-    setTextB((prevState) => {
-      if (prevState[index] === undefined) {
-        return { ...prevState, [index]: true }; // Open text box for the first time
-      }
-      return { ...prevState, [index]: !prevState[index] }; // Toggle the state
-    });
-  };
 
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -54,7 +71,6 @@ const NextPage = () => {
       setUploadStatus("uploading");
       const formData = new FormData();
       formData.append("file", selectedFile);
-
       const response = await axios.post("http://localhost:8000/api/upload", formData, {
         onUploadProgress: (progressEvent) => {
           const percentageCompleted = Math.round(
@@ -63,11 +79,10 @@ const NextPage = () => {
           setProgress(percentageCompleted);
         },
       });
-
       setUploadStatus("done");
       setOriginalAudioId(response.data.originalAudio._id);
-      setProcessedAudios(response.data.processedAudios);  // Save processed audio data
-      setShowClearDivide(true);  // Show Clear and Divide buttons when upload is done
+      setProcessedAudios(response.data.processedAudios);
+      setShowClearDivide(true);
     } catch (error) {
       console.error("Error during upload:", error);
       setUploadStatus("select");
@@ -75,11 +90,8 @@ const NextPage = () => {
   };
 
   const handleDivide = () => {
-    setShowProcessedAudios(true);  // Show processed audios when Divide is clicked
+    setShowProcessedAudios(true);
   };
-
-  const text = 'This is a text box to be displayed.This is a text box to be displayed. This is a text box to be displayed. This is a text box to be displayed. ';
-  const words = text.split(" ");
 
   return (
     <div className="container">
@@ -100,7 +112,6 @@ const NextPage = () => {
             onChange={handleFileChange}
             style={{ display: "none" }}
           />
-          {/* Upload button when no file is selected */}
           {!selectedFile && (
             <button className="file-btn" onClick={onChooseFile}>
               <span className="material-symbols-outlined">upload</span>Upload File
@@ -134,13 +145,11 @@ const NextPage = () => {
                   )}
                 </div>
               </div>
-              {/* Upload button to start the upload */}
               {uploadState === "select" && (
                 <button className="upload-btn" onClick={handleUpload}>
                   Upload
                 </button>
               )}
-              {/* Render Clear and Divide buttons after upload is done */}
               {uploadState === "done" && showClearDivide && (
                 <div className="button-container">
                   <button className="clear-btn" onClick={clearFileInput}>Clear</button>
@@ -149,7 +158,6 @@ const NextPage = () => {
               )}
             </>
           )}
-          {/* Render Processed Audios directly below */}
           {processedAudios.length > 0 && showProcessedAudios && (
             <div className="processed-audios">
               <h2>Processed Audios</h2>
@@ -159,9 +167,12 @@ const NextPage = () => {
                     <li className="audio-item">
                       Audio {index + 1}:
                       <div className="audio-player">
-                        <audio controls>
+                        <audio
+                          controls
+                          onError={(e) => console.error("Error loading audio file", e)}
+                        >
                           <source
-                            src={`http://localhost:8000${audio.filePath}`}
+                            src={`http://localhost:8000/uploads/${audio.filePath}`}
                             type="audio/mpeg"
                           />
                           Your browser does not support the audio element.
@@ -169,25 +180,28 @@ const NextPage = () => {
                       </div>
                       <div
                         className="text-button"
-                        onClick={() => handleTextBox(index)}
+                        onClick={() => handleTextBox(index, audio.filePath)}
                       >
                         T
                       </div>
                     </li>
 
-                    {/* Text Box with Animation */}
-                    <div
-                      className={`text-box ${textB[index] ? 'open' : ''}`}
-                    >
-                      {words.map((word, wordIndex) => (
-                        <span
-                          key={wordIndex}
-                          className="animated-word"
-                          style={{ animationDelay: `${wordIndex * 0.2}s` }}
-                        >
-                          {word}
-                        </span>
-                      ))}
+                    <div className={`text-box ${textB[index] ? "open" : ""}`}>
+                      {textB[index] && (
+                        <>
+                          {textB[index]
+                            .split(" ")
+                            .map((word, wordIndex) => (
+                              <span
+                                key={wordIndex}
+                                className="animated-word"
+                                style={{ animationDelay: `${wordIndex * 0.2}s` }}
+                              >
+                                {word}
+                              </span>
+                            ))}
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}

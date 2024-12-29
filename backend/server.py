@@ -5,6 +5,8 @@ import os
 import time
 import shutil
 from werkzeug.utils import secure_filename
+import speech_recognition as sr
+from pydub import AudioSegment
 from bson import ObjectId
 
 app = Flask(__name__)
@@ -29,6 +31,50 @@ def allowed_file(filename):
     result = '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
     print(f"Checking if file '{filename}' is allowed: {result}")
     return result
+
+# Convert audio to WAV format
+def prepare_voice_file(path: str) -> str:
+    """
+    Converts the input audio file to WAV format if necessary and returns the path to the WAV file.
+    """
+    # Join the upload folder path and the given file path
+    full_path = os.path.join(app.config['UPLOAD_FOLDER'], path)  # Relative path for the file inside 'uploads'
+    print(f"Preparing audio file: {full_path}")  # Print the full file path being processed
+
+    if os.path.splitext(full_path)[1] == '.wav':
+        print("Audio file is already in WAV format.")  # Print if the file is already WAV
+        return full_path
+    elif os.path.splitext(full_path)[1] in ('.mp3', '.m4a', '.ogg', '.flac'):
+        print(f"Converting {full_path} to WAV format...")  # Print when conversion starts
+        audio_file = AudioSegment.from_file(full_path, format=os.path.splitext(full_path)[1][1:])
+        wav_file = os.path.splitext(full_path)[0] + '.wav'
+        audio_file.export(wav_file, format='wav')
+        print(f"Conversion completed. New file: {wav_file}")  # Print the converted file path
+        return wav_file
+    else:
+        raise ValueError(f'Unsupported audio format: {os.path.splitext(full_path)[1]}')  # Print unsupported format
+
+# Transcribe audio using Google Speech API
+def transcribe_audio(audio_data, language) -> str:
+    """
+    Transcribes audio data to text using Google's speech recognition API.
+    """
+    r = sr.Recognizer()
+    try:
+        text = r.recognize_google(audio_data, language=language)
+        return text
+    except sr.UnknownValueError:
+        return "Google Speech Recognition could not understand the audio."
+    except sr.RequestError as e:
+        return f"Could not request results from Google Speech Recognition service; {e}"
+
+# Write transcription to file
+def write_transcription_to_file(text, output_file) -> None:
+    """
+    Writes the transcribed text to the output file.
+    """
+    with open(output_file, 'w') as f:
+        f.write(text)
 
 # Mock audio separation logic (simulates generating identical files)
 def mock_audio_separation(audio_file_path):
@@ -92,7 +138,7 @@ def upload_file():
         for file_info in separated_files:
             processed_audio = {
                 "filename": file_info["filePath"],
-                "filePath": f"/uploads/{file_info['filePath']}",
+                "filePath": f"{file_info['filePath']}",
                 "isProcessed": True,
                 "originalAudioId": str(original_audio_id)  # Convert ObjectId to string
             }
@@ -113,6 +159,35 @@ def upload_file():
     except Exception as e:
         print(f"Error processing the audio file: {str(e)}")
         return jsonify({"message": f"Error processing the audio file: {str(e)}"}), 500
+
+@app.route('/api/transcribe', methods=['POST'])
+def transcribe_audio_from_file():
+    data = request.json
+    audio_file_path = data.get("audioFilePath")
+    language = data.get("language", "en-US")
+    
+    print(f"Received transcription request for file: {audio_file_path}")
+    print(f"Transcription language set to: {language}")
+    
+    try:
+        # Prepare the audio file (convert it to WAV if necessary)
+        print(f"Preparing audio file: {audio_file_path}")
+        wav_file = prepare_voice_file(audio_file_path)
+        print(f"Audio file prepared: {wav_file}")
+
+        # Perform transcription using the Speech Recognition API
+        with sr.AudioFile(wav_file) as source:
+            print("Recording audio data...")
+            audio_data = sr.Recognizer().record(source)
+            print("Audio data recorded, starting transcription...")
+            text = transcribe_audio(audio_data, language)
+            print(f"Transcription completed: {text[:100]}...")  # Print the first 100 characters of the transcription
+
+            return jsonify({"transcription": text}), 200
+
+    except Exception as e:
+        print(f"Error during transcription: {e}")
+        return jsonify({"message": f"Error transcribing the audio: {str(e)}"}), 500
 
 
 @app.route('/uploads/<filename>', methods=['GET'])
