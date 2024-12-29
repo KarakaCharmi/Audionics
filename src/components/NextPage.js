@@ -4,18 +4,6 @@ import axios from "axios";
 
 const NextPage = () => {
   const [textB, setTextB] = useState({});
-
-  const handleTextBox = (index) => {
-    // Update state only when the current state is different
-    setTextB((prevState) => {
-      // Check if the state for this specific index is the same before updating
-      if (prevState[index] === undefined) {
-        return { ...prevState, [index]: true }; // Open the text box for the first time
-      }
-      return { ...prevState, [index]: !prevState[index] }; // Toggle the state
-    });
-  };
-  const inputRef = useRef();
   const [selectedFile, setSelectedFile] = useState(null);
   const [progress, setProgress] = useState(0);
   const [uploadState, setUploadStatus] = useState("select");
@@ -24,6 +12,16 @@ const NextPage = () => {
   const [originalAudioId, setOriginalAudioId] = useState(null);
   const [showClearDivide, setShowClearDivide] = useState(false);
   const [showProcessedAudios, setShowProcessedAudios] = useState(false);
+  const inputRef = useRef();
+
+  const handleTextBox = (index) => {
+    setTextB((prevState) => {
+      if (prevState[index] === undefined) {
+        return { ...prevState, [index]: true }; // Open text box for the first time
+      }
+      return { ...prevState, [index]: !prevState[index] }; // Toggle the state
+    });
+  };
 
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -42,8 +40,8 @@ const NextPage = () => {
     setUploadStatus("select");
     setProcessedAudios([]);
     setOriginalAudioId(null);
-    setShowClearDivide(false);  // Hide Clear and Divide buttons after clear
-    setShowProcessedAudios(false); // Hide processed audios on clear
+    setShowClearDivide(false);
+    setShowProcessedAudios(false);
   };
 
   const handleUpload = async () => {
@@ -68,7 +66,7 @@ const NextPage = () => {
 
       setUploadStatus("done");
       setOriginalAudioId(response.data.originalAudio._id);
-      setProcessedAudios(response.data.processedAudios);
+      setProcessedAudios(response.data.processedAudios);  // Save processed audio data
       setShowClearDivide(true);  // Show Clear and Divide buttons when upload is done
     } catch (error) {
       console.error("Error during upload:", error);
@@ -79,8 +77,9 @@ const NextPage = () => {
   const handleDivide = () => {
     setShowProcessedAudios(true);  // Show processed audios when Divide is clicked
   };
-  const text='This is a text box to be displayed.This is a text box to be displayed. This is a text box to be displayed. This is a text box to be displayed. ';
-  const words=text.split(" ");
+
+  const text = 'This is a text box to be displayed.This is a text box to be displayed. This is a text box to be displayed. This is a text box to be displayed. ';
+  const words = text.split(" ");
 
   return (
     <div className="container">
@@ -112,7 +111,7 @@ const NextPage = () => {
               <div className="file-card">
                 <span className="material-symbols-outlined icon">audiotrack</span>
                 <div className="file-info">
-                  <div style={{ flex: 1  }}>
+                  <div style={{ flex: 1 }}>
                     <h6>{selectedFile.name}</h6>
                     <div className="progress-bg">
                       <div className="progress" style={{ width: `${progress}%` }}></div>
@@ -151,50 +150,50 @@ const NextPage = () => {
             </>
           )}
           {/* Render Processed Audios directly below */}
-    {processedAudios.length > 0 && showProcessedAudios && (
-  <div className="processed-audios">
-    <h2>Processed Audios</h2>
-    <ul>
-      {processedAudios.map((audio, index) => (
-        <div className="each-audio" key={index}>
-          <li className="audio-item">
-            Audio {index + 1}:
-            <div className="audio-player">
-              <audio controls>
-                <source
-                  src={`http://localhost:8000${audio.filePath}`}
-                  type="audio/mpeg"
-                />
-                Your browser does not support the audio element.
-              </audio>
-            </div>
-            <div
-              className="text-button"
-              onClick={() => handleTextBox(index)}
-            >
-              T
-            </div>
-          </li>
+          {processedAudios.length > 0 && showProcessedAudios && (
+            <div className="processed-audios">
+              <h2>Processed Audios</h2>
+              <ul>
+                {processedAudios.map((audio, index) => (
+                  <div className="each-audio" key={index}>
+                    <li className="audio-item">
+                      Audio {index + 1}:
+                      <div className="audio-player">
+                        <audio controls>
+                          <source
+                            src={`http://localhost:8000${audio.filePath}`}
+                            type="audio/mpeg"
+                          />
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
+                      <div
+                        className="text-button"
+                        onClick={() => handleTextBox(index)}
+                      >
+                        T
+                      </div>
+                    </li>
 
-          {/* Text Box with Animation */}
-          <div
-            className={`text-box ${textB[index] ? 'open' : ''}`}
-          >
-            {words.map((word, wordIndex) => (
-              <span
-                key={wordIndex}
-                className="animated-word"
-                style={{ animationDelay: `${wordIndex*0.2}s` }}
-              >
-                {word}
-              </span>
-            ))}
-          </div>
-        </div>
-      ))}
-    </ul>
-  </div>
-)}
+                    {/* Text Box with Animation */}
+                    <div
+                      className={`text-box ${textB[index] ? 'open' : ''}`}
+                    >
+                      {words.map((word, wordIndex) => (
+                        <span
+                          key={wordIndex}
+                          className="animated-word"
+                          style={{ animationDelay: `${wordIndex * 0.2}s` }}
+                        >
+                          {word}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>
