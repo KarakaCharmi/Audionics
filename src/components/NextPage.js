@@ -79,15 +79,11 @@ const NextPage = () => {
   const handleDivide = () => {
     setShowProcessedAudios(true);  // Show processed audios when Divide is clicked
   };
-  const text='This is a text box to be displayed.dhbciw uewfiuew fwiuefg weuifg weufgwgeiw eugfwei giweug wieugiw uwieug weiu ';
+  const text='This is a text box to be displayed.This is a text box to be displayed. This is a text box to be displayed. This is a text box to be displayed. ';
   const words=text.split(" ");
 
   return (
     <div className="container">
-      {/* <video autoPlay loop muted playsInline className="background-video">
-    <source src="/animation.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
-  </video> */}
       {!showUploader ? (
         <div className="intro-screen">
           <h1>Welcome to Audionics</h1>

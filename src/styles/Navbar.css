@@ -4,18 +4,21 @@
     justify-content: space-around; 
     align-items: center;
     padding: 12px 10px;
-    background: rgba(0, 0, 0, 0.5); 
+    background: rgba(0, 0, 0, 0.618); 
     backdrop-filter: blur(10px); 
     position: fixed; 
     top: 0; 
     left: 0; 
     width: 100%; 
-    z-index: 1000;     
+    z-index: 1000;  
+    transition: all 0.5s ease-in-out;   
 }
 .navbar.scrolled {
-    background: rgba(0, 0, 0, 0.7); 
+    background: rgba(0, 0, 0, 0.784); 
 }
-
+.navbar:hover{
+    box-shadow: 0px 0.5px 2.5px whitesmoke;
+}
 /* Logo Container */
 .logo {
     display: flex;
@@ -38,7 +41,7 @@
 }
 
 .target-icon .icon-wrapper {    
-    color: #fff;    
+    color: #ffffff;    
     width: 100%;    
     height: 100%;   
     display: flex;  
@@ -49,16 +52,19 @@
 
 .target-icon i {    
     font-size: 20px;    
-    color: #2292a4; 
+    color: rgb(73, 186, 238); 
 }   
 
 /* Logo Text */ 
 .logo-primary { 
-    color: #2292a4;
+    color: black;
     display: flex;
     justify-content: center;
     align-items: center;
     margin-left: 0px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 2px;
 }
 
 .logo-secondary {
@@ -111,7 +117,7 @@
     bottom: 0;
     width: 100%;
     height: 2.3px;
-    background-color: #2292a4;
+    background-color: rgb(255, 255, 255);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 0.3s ease;
@@ -125,16 +131,16 @@
 
 /* Hover text color change to white */
 .nav-menu ul li a:hover {
-    color: #fff;
+    color: rgb(238, 73, 238);
 }
 
 /* Active link effects */
 .nav-menu ul li a.active {
-    color: #2292a4;
+    color: rgb(149, 149, 234);
 }
 
 .nav-menu ul li a.active:hover {
-    color: #fff; 
+    color: rgb(238, 73, 238); 
 }
 
 /* Hamburger Icon */

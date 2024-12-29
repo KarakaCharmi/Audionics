@@ -1,6 +1,7 @@
 /* Container */
 .container {
-    height: 100vh; 
+    height: auto;
+    min-height: 100vh; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -10,7 +11,7 @@
     background: linear-gradient(to right, #24243e, #302b63, #0f0c29);  */
     font-family: "Arial", sans-serif;
     box-sizing: border-box;
-    background:url("./home_bg.jpg") no-repeat;
+    background:url("./home_bg.jpeg") no-repeat;
     background-size:cover;
     background-position:center;
     /* transition: transform 1s ease; Add transition for sliding effect */
@@ -25,9 +26,9 @@
     background-color: #a3b7ca; /* Soft Blue */
     padding: 30px;
     border-radius: 15px;
-    border: 1px inset #0f0c29 ;
+    border: 2px inset silver ;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.744);
-    margin-top: 120px; /* Add margin to push it below the navbar */
+    margin-top: 170px; /* Add margin to push it below the navbar */
     /* You can adjust the 60px based on the height of your navbar */
 }
 
@@ -40,24 +41,28 @@
 
 .intro-screen p {
     font-size: 18px;
-    color: #476f95; /* Medium Blue */
+    color: #702963; /* Medium Blue */
     margin: 0;
 }
 
 .get-started-btn {
     font-size: 18px;
     font-weight: 500;
-    color: #d1dbe4; /* Light Blue */
+    color: #ffffff; /* Light Blue */
     background-color: black; /* Dark Blue */
     border: none;
     border-radius: 8px;
     padding: 10px 20px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    border: 1px inset transparent;
+    transition: all 0.5s ease;
 }
 
 .get-started-btn:hover {
-    background-color: #476f95; /* Medium Blue */
+    background-color: #770737; 
+    color: rgb(245, 245, 245);
+    box-shadow: 0px 2px 5px black;
+    border: 1px inset black;
 }
 
 /* Content Area */
@@ -92,6 +97,7 @@
     width: 70%;
     box-sizing: border-box;
     color: #f4f4f4;
+    margin-bottom: 30px;
     
   }
   .processed-audios ul{
@@ -178,27 +184,39 @@
 .file-btn {
     width: 330px;
     height: 150px;
-    font-size: 18px;
-    font-weight: 500;
+    font-size: 25px;
+    font-weight: 700;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /* gap: 15px; */
-    color: black; /* Dark Blue */
-    background-color: #d1dbe4; /* Light Blue */
-    border: 2px dashed #476f95; /* Medium Blue */
+    color: #310216;
+    background: linear-gradient(45deg, #c7b468, #578095, #865fac);
+  background-size: 300% 300%;
+  animation: glowingBackground 5s ease infinite; 
+    border: 2px dashed #554f91; 
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.5s ease-in-out;
     border-radius: 15px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .file-btn:hover {
-    background-color: #a3b7ca; /* Soft Blue */
+    color: #ddd;
     border-color: black; /* Dark Blue */
+    box-shadow: 2px 2px 5px black;
 }
-
+@keyframes glowingBackground {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
 .file-btn span {
     width: 50px;
     height: 50px;
