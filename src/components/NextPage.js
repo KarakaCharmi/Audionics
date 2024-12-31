@@ -3,30 +3,39 @@ import "../styles/NextPage.css";
 import axios from "axios";
 
 const NextPage = () => {
-  const [textB, setTextB] = useState({});
-  const [isTranscribing, setIsTranscribing] = useState({});
+  const [textB, setTextB] = useState({}); // State for storing transcriptions
+  const [isTextBoxOpen, setIsTextBoxOpen] = useState({}); // State for tracking text box visibility
+  const [isTranscribing, setIsTranscribing] = useState({}); // State for tracking transcription in progress
 
   const handleTextBox = async (index, audioFilePath) => {
-    if (!isTranscribing[index]) {
-      setIsTranscribing((prevState) => ({ ...prevState, [index]: true }));
+    // Toggle text box visibility
+    setIsTextBoxOpen((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index],
+    }));
 
-      try {
-        const response = await axios.post("http://localhost:8000/api/transcribe", {
-          audioFilePath: audioFilePath,
-          language: "en-US",
-        });
+    // If transcription is already in progress or exists, do nothing
+    if (isTranscribing[index] || textB[index]) return;
 
-        if (response.data.transcription) {
-          setTextB((prevState) => ({
-            ...prevState,
-            [index]: response.data.transcription,
-          }));
-        }
-      } catch (error) {
-        console.error("Error during transcription:", error);
-      } finally {
-        setIsTranscribing((prevState) => ({ ...prevState, [index]: false }));
+    // Start transcription
+    setIsTranscribing((prevState) => ({ ...prevState, [index]: true }));
+
+    try {
+      const response = await axios.post("http://localhost:8000/api/transcribe", {
+        audioFilePath: audioFilePath,
+        language: "en-US",
+      });
+
+      if (response.data.transcription) {
+        setTextB((prevState) => ({
+          ...prevState,
+          [index]: response.data.transcription,
+        }));
       }
+    } catch (error) {
+      console.error("Error during transcription:", error);
+    } finally {
+      setIsTranscribing((prevState) => ({ ...prevState, [index]: false }));
     }
   };
 
@@ -172,7 +181,7 @@ const NextPage = () => {
                           onError={(e) => console.error("Error loading audio file", e)}
                         >
                           <source
-                            src={`http://localhost:8000/uploads/${audio.filePath}`}
+                            src={`http://localhost:8000/uploads/${audio.filename}`}
                             type="audio/mpeg"
                           />
                           Your browser does not support the audio element.
@@ -180,27 +189,27 @@ const NextPage = () => {
                       </div>
                       <div
                         className="text-button"
-                        onClick={() => handleTextBox(index, audio.filePath)}
+                        onClick={() => handleTextBox(index, audio.filename)}
                       >
                         T
                       </div>
                     </li>
 
-                    <div className={`text-box ${textB[index] ? "open" : ""}`}>
-                      {textB[index] && (
-                        <>
-                          {textB[index]
-                            .split(" ")
-                            .map((word, wordIndex) => (
-                              <span
-                                key={wordIndex}
-                                className="animated-word"
-                                style={{ animationDelay: `${wordIndex * 0.2}s` }}
-                              >
-                                {word}
-                              </span>
-                            ))}
-                        </>
+                    <div className={`text-box ${isTextBoxOpen[index] ? "open" : ""}`}>
+                      {textB[index] ? (
+                        textB[index]
+                          .split(" ")
+                          .map((word, wordIndex) => (
+                            <span
+                              key={wordIndex}
+                              className="animated-word"
+                              style={{ animationDelay: `${wordIndex * 0.2}s` }}
+                            >
+                              {word}
+                            </span>
+                          ))
+                      ) : (
+                        <p>Loading transcription...</p>
                       )}
                     </div>
                   </div>

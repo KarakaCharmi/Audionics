@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 import speech_recognition as sr
 from pydub import AudioSegment
 from bson import ObjectId
+from pydub import AudioSegment
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -33,26 +34,37 @@ def allowed_file(filename):
     return result
 
 # Convert audio to WAV format
+
+
 def prepare_voice_file(path: str) -> str:
     """
-    Converts the input audio file to WAV format if necessary and returns the path to the WAV file.
+    Ensures the audio file is in a valid 16-bit PCM WAV format.
     """
-    # Join the upload folder path and the given file path
-    full_path = os.path.join(app.config['UPLOAD_FOLDER'], path)  # Relative path for the file inside 'uploads'
-    print(f"Preparing audio file: {full_path}")  # Print the full file path being processed
+    full_path = os.path.join(app.config['UPLOAD_FOLDER'], path)
+    print(f"Preparing audio file: {path}")
 
-    if os.path.splitext(full_path)[1] == '.wav':
-        print("Audio file is already in WAV format.")  # Print if the file is already WAV
-        return full_path
-    elif os.path.splitext(full_path)[1] in ('.mp3', '.m4a', '.ogg', '.flac'):
-        print(f"Converting {full_path} to WAV format...")  # Print when conversion starts
-        audio_file = AudioSegment.from_file(full_path, format=os.path.splitext(full_path)[1][1:])
-        wav_file = os.path.splitext(full_path)[0] + '.wav'
-        audio_file.export(wav_file, format='wav')
-        print(f"Conversion completed. New file: {wav_file}")  # Print the converted file path
+    ext = os.path.splitext(full_path)[1].lower()
+    wav_file = os.path.splitext(full_path)[0] + '_converted.wav'
+
+    try:
+        if ext == '.wav':
+            # Check if it's already a PCM WAV
+            audio = AudioSegment.from_wav(full_path)
+            if audio.sample_width == 2:  # 16-bit PCM WAV has sample width of 2 bytes
+                print("Audio file is already in 16-bit PCM WAV format.")
+                return path
+
+        # Convert to 16-bit PCM WAV
+        print(f"Converting {path} to 16-bit PCM WAV format...")
+        audio = AudioSegment.from_file(full_path, format=ext[1:])
+        audio = audio.set_sample_width(2)  # Set to 16-bit (2 bytes per sample)
+        audio.export(wav_file, format='wav')
+        print(f"Conversion completed. New file: {wav_file}")
         return wav_file
-    else:
-        raise ValueError(f'Unsupported audio format: {os.path.splitext(full_path)[1]}')  # Print unsupported format
+    except Exception as e:
+        print(f"Error during audio file preparation: {e}")
+        raise ValueError(f"Failed to convert audio file to WAV format: {e}")
+ # Print unsupported format
 
 # Transcribe audio using Google Speech API
 def transcribe_audio(audio_data, language) -> str:
@@ -80,27 +92,37 @@ def write_transcription_to_file(text, output_file) -> None:
 def mock_audio_separation(audio_file_path):
     try:
         print(f"Starting mock audio separation for file: {audio_file_path}")
-        voice1_file = f"{audio_file_path}-voice1.wav"
-        voice2_file = f"{audio_file_path}-voice2.wav"
+        
+        # Extract base filename without extension
+        base_name = os.path.splitext(audio_file_path)[0]
+        print(f"Base filename (without extension): {base_name}")
+        
+        # Get the first character of the base name and use it to determine the number of output files
+        num_files = int(base_name[1])  # Assuming the first character is a number indicating the number of files
+        print(f"Generating {num_files} audio files based on the first character of the base name.")
 
-        original_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_file_path)
+        # Create output filenames based on the number of required files
+        output_files = []
+        for i in range(1, num_files + 1):
+            # Replace 'm' with the current index (i) in the base name
+            updated_base_name = base_name.replace('m', str(i))
+            print(f"Base name after replacing 'm' with {i}: {updated_base_name}")
+            
+            # Generate filenames with the correct pattern
+            output_filename = f"{updated_base_name}.wav"  # Example: a31.wav, a32.wav, etc.
+            output_files.append(output_filename)
 
-        if not os.path.exists(original_path):
-            raise FileNotFoundError('Original audio file not found.')
+            # Print each generated filename
+            print(f"Generated output file: {output_filename}")
 
-        # Simulate processing by copying the original file
-        shutil.copy(original_path, os.path.join(app.config['UPLOAD_FOLDER'], voice1_file))
-        shutil.copy(original_path, os.path.join(app.config['UPLOAD_FOLDER'], voice2_file))
         print("Mock audio separation completed successfully.")
 
-        return [
-            {"voiceId": "voice1", "filePath": voice1_file},
-            {"voiceId": "voice2", "filePath": voice2_file},
-        ]
+        # Return only the filenames, not the full paths
+        return [{"voiceId": f"voice{i}", "filename": output_files[i - 1]} for i in range(1, num_files + 1)]
+    
     except Exception as e:
         print(f"Error during mock audio separation: {e}")
         raise e
-
 @app.route('/')
 def home():
     print("Accessed the home route.")
@@ -117,7 +139,7 @@ def upload_file():
         return jsonify({"message": "Invalid file type. Only audio files are allowed."}), 400
 
     try:
-        filename = secure_filename(f"{int(time.time())}-{file.filename}")
+        filename = secure_filename(f"{file.filename}")
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
 
@@ -130,23 +152,8 @@ def upload_file():
         }
         original_audio_id = audio_collection.insert_one(original_audio).inserted_id
 
-        # Mock audio separation
+        # Mock audio separation (just generate filenames)
         separated_files = mock_audio_separation(filename)
-
-        # Save processed audio details to MongoDB
-        processed_audios = []
-        for file_info in separated_files:
-            processed_audio = {
-                "filename": file_info["filePath"],
-                "filePath": f"{file_info['filePath']}",
-                "isProcessed": True,
-                "originalAudioId": str(original_audio_id)  # Convert ObjectId to string
-            }
-            processed_audio_id = audio_collection.insert_one(processed_audio).inserted_id
-            processed_audios.append({
-                **processed_audio,
-                "_id": str(processed_audio_id)  # Convert ObjectId to string
-            })
 
         return jsonify({
             "message": "File uploaded and processed successfully.",
@@ -154,7 +161,7 @@ def upload_file():
                 **original_audio,
                 "_id": str(original_audio_id)  # Convert ObjectId to string
             },
-            "processedAudios": processed_audios
+            "processedAudios": separated_files  # Return only the filenames
         }), 200
     except Exception as e:
         print(f"Error processing the audio file: {str(e)}")
@@ -165,10 +172,13 @@ def transcribe_audio_from_file():
     data = request.json
     audio_file_path = data.get("audioFilePath")
     language = data.get("language", "en-US")
-    
     print(f"Received transcription request for file: {audio_file_path}")
     print(f"Transcription language set to: {language}")
-    
+
+    # Check if audio_file_path is provided
+    if not audio_file_path:
+        return jsonify({"message": "No audio file path provided."}), 400
+
     try:
         # Prepare the audio file (convert it to WAV if necessary)
         print(f"Preparing audio file: {audio_file_path}")
@@ -182,14 +192,10 @@ def transcribe_audio_from_file():
             print("Audio data recorded, starting transcription...")
             text = transcribe_audio(audio_data, language)
             print(f"Transcription completed: {text[:100]}...")  # Print the first 100 characters of the transcription
-
             return jsonify({"transcription": text}), 200
-
     except Exception as e:
         print(f"Error during transcription: {e}")
         return jsonify({"message": f"Error transcribing the audio: {str(e)}"}), 500
-
-
 @app.route('/uploads/<filename>', methods=['GET'])
 def get_uploaded_file(filename):
     print(f"File requested: {filename}")
